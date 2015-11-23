@@ -16,7 +16,7 @@ rectw = 8 # This set by checking pixel size of the below mentioned 15pt font
 recth = 12
 fontSize = 15
 
-def textifyImage(imt, corpus):
+def textifyImage(imt, corpus, fname):
     im = Image.open(imt)
     imw, imh = im.size
 
@@ -44,7 +44,7 @@ def textifyImage(imt, corpus):
             else:
                 counter = 0
     # newimg.show()
-    newimg.save(imt.rsplit('.',1)[0] + '_textified.png')
+    newimg.save(fname)
 
 
 ### Respond to call from command line ###
@@ -54,6 +54,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--image', dest='i', help='Input image (to be manipulated)', nargs=1, required=True)
     parser.add_argument('-t', '--text', dest='t', help='Text corpus to use as source', nargs=1, required=True)
+    parser.add_argument('-o', '--output', dest='o', help='Output file name', nargs=1)
     args = parser.parse_args()
 
     txt = open(args.t[0], 'r')
@@ -61,4 +62,7 @@ if __name__ == "__main__":
     corpus = corpus.replace('\n', '').replace(' ', '')
     corpus = corpus.translate(string.maketrans("",""), string.punctuation)
     txt.close()
-    textifyImage(args.i[0], corpus)
+    if args.o:
+        textifyImage(args.i[0], corpus, args.o[0])
+    else:
+        textifyImage(args.i[0], corpus, args.i[0].rsplit('.',1)[0] + '_textified.png')
