@@ -1,5 +1,14 @@
-import os, sys, argparse, logging, string
+import argparse, inspect, logging, os, string, sys, time
 from PIL import Image, ImageDraw, ImageStat, ImageFont
+
+# Import subfolder modules
+# from http://stackoverflow.com/questions/279237/import-a-module-from-a-relative-path
+cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"lib")))
+if cmd_subfolder not in sys.path:
+    sys.path.insert(0, cmd_subfolder)
+
+import progressbar
+
 
 fn = 'files/UbuntuMono-Regular.ttf'
 
@@ -22,7 +31,10 @@ def textifyImage(imt, corpus):
     dn = ImageDraw.Draw(newimg)
     csize = len(corpus)
     counter = 0
-    for h in range(0, imh, recth):
+
+    bar = progressbar.ProgressBar()
+
+    for h in bar(range(0, imh, recth)):
         for w in range(0, imw, rectw):
             tmpc = ImageStat.Stat(im.crop((w, h, w+rectw, h+recth))).mean
             c = (int(tmpc[0]), int(tmpc[1]), int(tmpc[2]), 255)
